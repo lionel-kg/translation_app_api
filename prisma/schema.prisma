@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  email        String        @unique
+  password     String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  userWords            UserWord[]
+  translations         Translation[]
+  quizzes              Quiz[]
+  passwordResetTokens  PasswordResetToken[]
+}
+
+model Word {
+  id         Int        @id @default(autoincrement())
+  expression String     @unique
+  type       String
+  definition String     @db.Text
+  example    String     @db.Text
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  userWords  UserWord[]
+}
+
+model UserWord {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wordId         Int
+  word           Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  status         String   @default("Nouveau")
+  nextReviewDate DateTime @default(now())
+  interval       Int      @default(0)
+  easeFactor     Float    @default(2.5)
+  repetitions    Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([userId, wordId])
+  @@index([userId, nextReviewDate])
+}
+
+model Translation {
+  id              Int      @id @default(autoincrement())
+  title           String
+  textContent     String   @db.Text
+  vocabularyUsed  String   @db.Text
+  difficultyLevel String
+  coachNotes      String   @db.Text
+  traduction      String?  @db.Text
+
+  userId          Int
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Quiz {
+  id          Int            @id @default(autoincrement())
+  type        String
+  score       Int            @default(0)
+  totalItems  Int            @default(0)
+  completedAt DateTime?
+
+  userId      Int
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  questions   QuizQuestion[]
+
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([userId])
+}
+
+model QuizQuestion {
+  id            Int      @id @default(autoincrement())
+  quizId        Int
+  quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  wordId        Int
+  questionText  String   @db.Text
+  correctAnswer String
+  options       String?  @db.Text
+  userAnswer    String?
+  isCorrect     Boolean?
+
+  createdAt     DateTime @default(now())
+
+  @@index([quizId])
+}
+
+model PasswordResetToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}

@@ -1,0 +1,29 @@
+networks:
+  translation-network:
+    name: translation-network
+
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    container_name: translation_db
+    environment:
+      MYSQL_ROOT_PASSWORD: adminpassword
+      MYSQL_USER: translation_app
+      MYSQL_PASSWORD: y75dTQHwg8vj86lo08ZuJ7Crqfk
+      MYSQL_DATABASE: translation_app
+      TZ: "UTC"
+    ports:
+      - "3307:3306"
+    networks:
+      - translation-network
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql_data:

@@ -1,0 +1,6 @@
+projectKey=translation-app
+serverUrl=http://localhost:9000
+serverVersion=25.5.0.107428
+dashboardUrl=http://localhost:9000/dashboard?id=translation-app
+ceTaskId=c3b4f841-ebc3-484e-bfa1-0ea01fda5df3
+ceTaskUrl=http://localhost:9000/api/ce/task?id=c3b4f841-ebc3-484e-bfa1-0ea01fda5df3
