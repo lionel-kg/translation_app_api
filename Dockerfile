@@ -10,7 +10,6 @@ COPY prisma ./prisma/
 RUN npx prisma generate
 COPY .env.example .env
 
-
 EXPOSE 2000
 
 CMD ["npm", "start"]
