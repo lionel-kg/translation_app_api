@@ -8,6 +8,7 @@ RUN npm ci --omit=dev
 
 COPY prisma ./prisma/
 RUN npx prisma generate
+COPY . .
 COPY .env.example .env
 
 EXPOSE 2000
