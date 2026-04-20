@@ -27,6 +27,7 @@ pipeline {
                     sh """
                         docker run -d \
                         --name ${CONTAINER_NAME} \
+                        --network translation-network \
                         -p ${APP_PORT}:${APP_PORT} \
                         --restart unless-stopped \
                         ${IMAGE_NAME}:latest
