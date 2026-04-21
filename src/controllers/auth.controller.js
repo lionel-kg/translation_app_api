@@ -1,10 +1,12 @@
 const authService = require("../services/auth.service");
 const { sendMail } = require("../utils/mailer");
 
+const isProduction = process.env.NODE_ENV === "production";
+
 const cookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "lax",
+  secure: isProduction,
+  sameSite: isProduction ? "none" : "lax",
   path: "/",
 };
 
@@ -16,7 +18,6 @@ const accessCookieOptions = {
 const refreshCookieOptions = {
   ...cookieOptions,
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-  path: "/api/auth/refresh",
 };
 
 exports.register = async (req, res) => {
@@ -92,20 +93,14 @@ exports.refresh = async (req, res) => {
     res.json({ user });
   } catch (error) {
     res.clearCookie("accessToken", cookieOptions);
-    res.clearCookie("refreshToken", {
-      ...cookieOptions,
-      path: "/api/auth/refresh",
-    });
+    res.clearCookie("refreshToken", cookieOptions);
     res.status(401).json({ error: "Invalid refresh token" });
   }
 };
 
 exports.logout = async (req, res) => {
   res.clearCookie("accessToken", cookieOptions);
-  res.clearCookie("refreshToken", {
-    ...cookieOptions,
-    path: "/api/auth/refresh",
-  });
+  res.clearCookie("refreshToken", cookieOptions);
   res.json({ message: "Logged out" });
 };
 
