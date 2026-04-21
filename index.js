@@ -5,7 +5,9 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const morgan = require("morgan");
 const authMiddleware = require("./src/middleware/auth.middleware");
+const agentAuth = require("./src/middleware/agent.middleware");
 const authRoutes = require("./src/routes/auth.routes");
+const agentRoutes = require("./src/routes/agent.routes");
 const router = require("./src/routes/index.js");
 
 const app = express();
@@ -34,7 +36,10 @@ app.get("/", (req, res) => {
 // Auth routes (public)
 app.use("/api/auth", authRoutes);
 
-// All other routes (protected)
+// Agent routes (n8n) — protected by API key
+app.use("/api/agent", agentAuth, agentRoutes);
+
+// All other routes (protected by JWT)
 app.use("/api", authMiddleware, router);
 
 app.listen(port, () => console.log("Server Started on port " + port));
