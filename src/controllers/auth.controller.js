@@ -12,7 +12,7 @@ const cookieOptions = {
 
 const accessCookieOptions = {
   ...cookieOptions,
-  maxAge: 15 * 60 * 1000, // 15 minutes
+  maxAge: 2 * 60 * 60 * 1000, // 2 heures
 };
 
 const refreshCookieOptions = {
@@ -165,12 +165,10 @@ exports.resetPassword = async (req, res) => {
       !/[a-z]/.test(password) ||
       !/[0-9]/.test(password)
     ) {
-      return res
-        .status(400)
-        .json({
-          error:
-            "Password must be at least 8 characters with uppercase, lowercase, and a number",
-        });
+      return res.status(400).json({
+        error:
+          "Password must be at least 8 characters with uppercase, lowercase, and a number",
+      });
     }
 
     const success = await authService.resetPassword(token, password);
