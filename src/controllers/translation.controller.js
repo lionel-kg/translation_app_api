@@ -26,7 +26,7 @@ exports.update = async (req, res) => {
     );
     if (!updated) return res.status(404).json({ message: "Not found" });
 
-    await axios.post("http://localhost:5678/webhook-test/correction", {
+    await axios.post("https://n8n.lionelkg.com/webhook-test/correction", {
       originalText: updated.textContent,
       userResponse: userResponse,
       userEmail: req.user.email,
